@@ -79,6 +79,7 @@ int dfu_download( libusb_device_handle *device,
 
 	if (length < 0 || length > UINT16_MAX) {
 		errx(EX_SOFTWARE, "%s: invalid parameter value", __FUNCTION__);
+		return -EINVAL;
 	}
 
 
@@ -115,6 +116,7 @@ int dfu_upload( libusb_device_handle *device,
 
 	if (length < 0 || length > UINT16_MAX) {
 		errx(EX_SOFTWARE, "%s: invalid parameter value", __FUNCTION__);
+		return -EINVAL;
 	}
 
     status = libusb_control_transfer( device,
