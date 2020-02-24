@@ -116,7 +116,7 @@ void dfu_progress_bar(const char *desc, unsigned long long curr,
 		unsigned long long max)
 {
 	static char buf[PROGRESS_BAR_WIDTH + 1];
-	static unsigned long long last_progress = -1;
+	static unsigned long long last_progress = ULLONG_MAX;
 	static time_t last_time;
 	time_t curr_time = time(NULL);
 	unsigned long long progress;
@@ -246,7 +246,7 @@ void dfu_load_file(struct dfu_file *file, enum suffix_req check_suffix, enum pre
 		uint32_t crc = 0xffffffff;
 		const uint8_t *dfusuffix;
 		int missing_suffix = 0;
-		const char *reason;
+		const char *reason = "";
 
 		if (file->size.total < DFU_SUFFIX_LENGTH) {
 			reason = "File too short for DFU suffix";
@@ -415,10 +415,10 @@ void dfu_store_file(struct dfu_file *file, int write_suffix, int write_prefix)
 		crc = dfu_file_write_crc(f, crc, dfusuffix,
 		    DFU_SUFFIX_LENGTH - 4);
 
-		dfusuffix[12] = crc;
-		dfusuffix[13] = crc >> 8;
-		dfusuffix[14] = crc >> 16;
-		dfusuffix[15] = crc >> 24;
+		dfusuffix[12] = (uint8_t)crc;
+		dfusuffix[13] = (uint8_t)(crc >> 8);
+		dfusuffix[14] = (uint8_t)(crc >> 16);
+		dfusuffix[15] = (uint8_t)(crc >> 24);
 
 		crc = dfu_file_write_crc(f, crc, dfusuffix + 12, 4);
 	}

@@ -123,20 +123,30 @@ void dfuse_parse_options(const char *options)
 }
 
 /* DFU_UPLOAD request for DfuSe 1.1a */
-int dfuse_upload(struct dfu_if *dif, const unsigned short length,
-		 unsigned char *data, unsigned short transaction)
+int dfuse_upload(struct dfu_if *dif, const int length,
+		 unsigned char *data, int transaction)
 {
 	int status;
+
+	if (length < 0 || length > UINT16_MAX) {
+		errx(EX_SOFTWARE, "%s: invalid parameter value", __FUNCTION__);
+		return -EINVAL;
+	}
+
+	if (transaction < 0 || transaction > UINT16_MAX) {
+		errx(EX_SOFTWARE, "%s: invalid parameter value", __FUNCTION__);
+		return -EINVAL;
+	}
 
 	status = libusb_control_transfer(dif->dev_handle,
 		 /* bmRequestType */	 LIBUSB_ENDPOINT_IN |
 					 LIBUSB_REQUEST_TYPE_CLASS |
 					 LIBUSB_RECIPIENT_INTERFACE,
 		 /* bRequest      */	 DFU_UPLOAD,
-		 /* wValue        */	 transaction,
+		 /* wValue        */	 (uint16_t)transaction,
 		 /* wIndex        */	 dif->interface,
 		 /* Data          */	 data,
-		 /* wLength       */	 length,
+		 /* wLength       */	 (uint16_t)length,
 					 DFU_TIMEOUT);
 	if (status < 0) {
 		errx(EX_IOERR, "%s: libusb_control_msg returned %d",
@@ -146,20 +156,28 @@ int dfuse_upload(struct dfu_if *dif, const unsigned short length,
 }
 
 /* DFU_DNLOAD request for DfuSe 1.1a */
-int dfuse_download(struct dfu_if *dif, const unsigned short length,
-		   unsigned char *data, unsigned short transaction)
+int dfuse_download(struct dfu_if *dif, const int length,
+		   unsigned char *data, int transaction)
 {
 	int status;
+
+	if (length < 0 || length > UINT16_MAX) {
+		errx(EX_SOFTWARE, "%s: invalid parameter value", __FUNCTION__);
+	}
+
+	if (transaction < 0 || transaction > UINT16_MAX) {
+		errx(EX_SOFTWARE, "%s: invalid parameter value", __FUNCTION__);
+	}
 
 	status = libusb_control_transfer(dif->dev_handle,
 		 /* bmRequestType */	 LIBUSB_ENDPOINT_OUT |
 					 LIBUSB_REQUEST_TYPE_CLASS |
 					 LIBUSB_RECIPIENT_INTERFACE,
 		 /* bRequest      */	 DFU_DNLOAD,
-		 /* wValue        */	 transaction,
+		 /* wValue        */	 (uint16_t)transaction,
 		 /* wIndex        */	 dif->interface,
 		 /* Data          */	 data,
-		 /* wLength       */	 length,
+		 /* wLength       */	 (uint16_t)length,
 					 DFU_TIMEOUT);
 	if (status < 0) {
 		errx(EX_IOERR, "%s: libusb_control_transfer returned %d",

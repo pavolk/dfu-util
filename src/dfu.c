@@ -70,11 +70,17 @@ int dfu_detach( libusb_device_handle *device,
  */
 int dfu_download( libusb_device_handle *device,
                   const unsigned short interface,
-                  const unsigned short length,
+                  const int length,
                   const unsigned short transaction,
                   unsigned char* data )
 {
     int status;
+
+
+	if (length < 0 || length > UINT16_MAX) {
+		errx(EX_SOFTWARE, "%s: invalid parameter value", __FUNCTION__);
+	}
+
 
     status = libusb_control_transfer( device,
           /* bmRequestType */ LIBUSB_ENDPOINT_OUT | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE,
@@ -82,7 +88,7 @@ int dfu_download( libusb_device_handle *device,
           /* wValue        */ transaction,
           /* wIndex        */ interface,
           /* Data          */ data,
-          /* wLength       */ length,
+          /* wLength       */ (uint16_t)length,
                               dfu_timeout );
     return status;
 }
@@ -101,11 +107,15 @@ int dfu_download( libusb_device_handle *device,
  */
 int dfu_upload( libusb_device_handle *device,
                 const unsigned short interface,
-                const unsigned short length,
+                const int length,
                 const unsigned short transaction,
                 unsigned char* data )
 {
     int status;
+
+	if (length < 0 || length > UINT16_MAX) {
+		errx(EX_SOFTWARE, "%s: invalid parameter value", __FUNCTION__);
+	}
 
     status = libusb_control_transfer( device,
           /* bmRequestType */ LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE,
@@ -113,7 +123,7 @@ int dfu_upload( libusb_device_handle *device,
           /* wValue        */ transaction,
           /* wIndex        */ interface,
           /* Data          */ data,
-          /* wLength       */ length,
+          /* wLength       */ (uint16_t)length,
                               dfu_timeout );
     return status;
 }

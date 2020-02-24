@@ -115,7 +115,7 @@ static int get_utf8_string_descriptor(libusb_device_handle *devh,
 	}
 	if (tbuf[0] > r) {	/* if short read,           */
 		warnx("Patching string descriptor %d length (was %d, received %d)", desc_index, tbuf[0], r);
-		tbuf[0] = r;	/* fix up descriptor length */
+		tbuf[0] = (unsigned char)r;	/* fix up descriptor length */
 	}
 
 	outlen = tbuf[0] - 2;
@@ -173,7 +173,7 @@ static void probe_configuration(libusb_device *dev, struct libusb_device_descrip
 		memset(&func_dfu, 0, sizeof(func_dfu));
 		has_dfu = 0;
 
-		ret = libusb_get_config_descriptor(dev, cfg_idx, &cfg);
+		ret = libusb_get_config_descriptor(dev, (uint8_t)cfg_idx, &cfg);
 		if (ret != 0)
 			return;
 		if (match_config_index > -1 && match_config_index != cfg->bConfigurationValue) {
