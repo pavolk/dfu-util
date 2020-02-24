@@ -527,8 +527,8 @@ probe:
 		 * procedure */
 		/* If a match vendor/product was specified, use that as the runtime
 		 * vendor/product, otherwise use the DFU mode vendor/product */
-		runtime_vendor = match_vendor < 0 ? dfu_root->vendor : match_vendor;
-		runtime_product = match_product < 0 ? dfu_root->product : match_product;
+		runtime_vendor = match_vendor < 0 ? dfu_root->vendor : (uint16_t)match_vendor;
+		runtime_product = match_product < 0 ? dfu_root->product : (uint16_t)match_product;
 	}
 
 dfustate:
