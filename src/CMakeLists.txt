@@ -19,4 +19,6 @@ target_link_libraries(${TARGET} PRIVATE ${DEPS})
 
 add_executable(dfu-util main.c)
 target_compile_options(dfu-util PRIVATE /wd4996)
-target_link_libraries(dfu-util dfu wingetopt CONAN_PKG::libusb)
+target_link_libraries(dfu-util PRIVATE dfu wingetopt CONAN_PKG::libusb)
+
+install(TARGETS dfu-util RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
