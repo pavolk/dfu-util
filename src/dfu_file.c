@@ -205,13 +205,13 @@ void dfu_load_file(struct dfu_file *file, enum suffix_req check_suffix, enum pre
 		_setmode( _fileno( stdin ), _O_BINARY );
 #endif
 		file->firmware = (uint8_t*) dfu_malloc(STDIN_CHUNK_SIZE);
-		read_bytes = fread(file->firmware, 1, STDIN_CHUNK_SIZE, stdin);
+		read_bytes = (int)fread(file->firmware, 1, STDIN_CHUNK_SIZE, stdin);
 		file->size.total = read_bytes;
 		while (read_bytes == STDIN_CHUNK_SIZE) {
 			file->firmware = (uint8_t*) realloc(file->firmware, file->size.total + STDIN_CHUNK_SIZE);
 			if (!file->firmware)
 				err(EX_IOERR, "Could not allocate firmware buffer");
-			read_bytes = fread(file->firmware + file->size.total, 1, STDIN_CHUNK_SIZE, stdin);
+			read_bytes = (int)fread(file->firmware + file->size.total, 1, STDIN_CHUNK_SIZE, stdin);
 			file->size.total += read_bytes;
 		}
 		if (verbose)
